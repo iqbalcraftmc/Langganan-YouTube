@@ -21,6 +21,9 @@ h1{font-size:1.35rem;font-weight:800;margin:0;letter-spacing:-.02em;flex:1}
 .btn.main{background:var(--acc);color:var(--accink);border-color:var(--acc)}
 #status{padding:10px 20px;color:var(--mute);font-size:.9rem}
 #status.err{color:#c4302b}
+.consent{display:block;padding:0 20px 8px;font-size:.88rem;color:var(--mute)}
+.consent a,footer a{color:var(--acc)}
+footer{padding:16px 20px 28px;font-size:.85rem;color:var(--mute);border-top:1px solid var(--line)}
 .layout{display:grid;grid-template-columns:240px 1fr;gap:0;min-height:calc(100vh - 110px)}
 #rail{padding:12px;border-right:1px solid var(--line);overflow-y:auto;max-height:calc(100vh - 110px);position:sticky;top:60px;align-self:start}
 .ch{display:flex;align-items:center;gap:10px;width:100%;padding:7px 8px;border:0;background:none;border-radius:8px;text-align:left}
@@ -57,15 +60,17 @@ h1{font-size:1.35rem;font-weight:800;margin:0;letter-spacing:-.02em;flex:1}
   <button class="btn" id="logout" hidden>Keluar</button>
 </header>
 <div id="status">Masuk dengan akun Google untuk melihat video terbaru dari channel yang kamu subscribe.</div>
+<label class="consent" id="consent"><input type="checkbox" id="setuju"> Saya setuju dengan <a href="/privacy">Kebijakan Privasi</a> dan <a href="https://www.youtube.com/t/terms" target="_blank" rel="noopener">Ketentuan Layanan YouTube</a>.</label>
 <div class="layout">
   <nav id="rail" aria-label="Channel yang disubscribe"></nav>
   <main id="grid"></main>
 </div>
+<footer>Aplikasi ini menggunakan YouTube API Services. <a href="/privacy">Kebijakan Privasi</a> • <a href="https://www.youtube.com/t/terms" target="_blank" rel="noopener">Ketentuan Layanan YouTube</a> • <a href="http://www.google.com/policies/privacy" target="_blank" rel="noopener">Kebijakan Privasi Google</a></footer>
 
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script>
 // ====== PENGATURAN ======
-const CLIENT_ID = "1006757478713-44qic0eic0lb25vgpnk9292a6uarcq91.apps.googleusercontent.com";
+const CLIENT_ID = "319061354289-q5gal9an0atbnqmbq0opm8i5u2f85f4q.apps.googleusercontent.com";
 const VIDEOS_PER_CHANNEL = 5;     // video terbaru per channel
 const CACHE_MENIT = 15;           // hemat kuota API
 const BARU_JAM = 24;              // label BARU hilang setelah lewat jam ini
@@ -206,13 +211,14 @@ async function muat(paksa) {
 }
 
 function masuk() {
+  if (!$("setuju").checked) { setStatus("Centang persetujuan Kebijakan Privasi dan Ketentuan Layanan YouTube dulu.", true); return; }
   if (!window.google || !google.accounts) { setStatus("Library Google belum siap. Coba lagi sebentar.", true); return; }
   if (!tokenClient) tokenClient = google.accounts.oauth2.initTokenClient({
     client_id: CLIENT_ID, scope: SCOPE,
     callback: r => {
       if (r.error) { setStatus("Login gagal: " + r.error, true); return; }
       token = r.access_token;
-      $("login").hidden = true; $("logout").hidden = false; $("refresh").hidden = false;
+      $("consent").hidden = true; $("login").hidden = true; $("logout").hidden = false; $("refresh").hidden = false;
       muat(false);
     }
   });
@@ -230,7 +236,7 @@ $("logout").onclick = () => {
   if (token) google.accounts.oauth2.revoke(token, () => {});
   token = null; subs = []; videos = []; filter = null;
   try { localStorage.removeItem("langgananku:v1"); } catch (e) {}
-  $("login").hidden = false; $("logout").hidden = true; $("refresh").hidden = true;
+  $("consent").hidden = false; $("login").hidden = false; $("logout").hidden = true; $("refresh").hidden = true;
   $("rail").replaceChildren(); $("grid").replaceChildren();
   setStatus("Kamu sudah keluar.");
 };

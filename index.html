@@ -22,6 +22,7 @@ h1{font-size:1.35rem;font-weight:800;margin:0;letter-spacing:-.02em;flex:1}
 #status{padding:10px 20px;color:var(--mute);font-size:.9rem}
 #status.err{color:#c4302b}
 .consent{display:block;padding:0 20px 8px;font-size:.88rem;color:var(--mute)}
+.consent[hidden]{display:none}
 .consent a,footer a{color:var(--acc)}
 footer{padding:16px 20px 28px;font-size:.85rem;color:var(--mute);border-top:1px solid var(--line)}
 .layout{display:grid;grid-template-columns:240px 1fr;gap:0;min-height:calc(100vh - 110px)}
@@ -65,7 +66,7 @@ footer{padding:16px 20px 28px;font-size:.85rem;color:var(--mute);border-top:1px 
   <nav id="rail" aria-label="Channel yang disubscribe"></nav>
   <main id="grid"></main>
 </div>
-<footer>Aplikasi ini menggunakan YouTube API Services. <a href="/privacy">Kebijakan Privasi</a> • <a href="https://www.youtube.com/t/terms" target="_blank" rel="noopener">Ketentuan Layanan YouTube</a> • <a href="http://www.google.com/policies/privacy" target="_blank" rel="noopener">Kebijakan Privasi Google</a></footer>
+<footer>Aplikasi ini menggunakan YouTube API Services. <a href="/privacy">Kebijakan Privasi</a> • <a href="/terms">Ketentuan Layanan</a> • <a href="https://www.youtube.com/t/terms" target="_blank" rel="noopener">Ketentuan Layanan YouTube</a> • <a href="http://www.google.com/policies/privacy" target="_blank" rel="noopener">Kebijakan Privasi Google</a></footer>
 
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script>

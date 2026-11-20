@@ -3,42 +3,244 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ketentuan Layanan – Langgananku</title>
+<title>Langgananku</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#eef1f5;--panel:#fff;--ink:#16202e;--mute:#5f6b7c;--acc:#3a46e8}
-@media(prefers-color-scheme:dark){:root{--bg:#10151d;--panel:#18202b;--ink:#e8edf4;--mute:#97a3b4;--acc:#8b94ff}}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.6}
-main{max-width:680px;margin:0 auto;padding:28px 20px 60px;background:var(--panel);min-height:100vh}
-h1{font-size:1.6rem;margin:0 0 4px}
-h2{font-size:1.1rem;margin:28px 0 6px}
-p,li{max-width:70ch}
-.d{color:var(--mute);margin:0 0 20px}
-a{color:var(--acc)}
+:root{--bg:#eef1f5;--panel:#fff;--ink:#16202e;--mute:#5f6b7c;--line:#d9dee6;--acc:#3a46e8;--accink:#fff;--font:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",sans-serif}
+@media(prefers-color-scheme:dark){:root{--bg:#10151d;--panel:#18202b;--ink:#e8edf4;--mute:#97a3b4;--line:#2a3442;--acc:#8b94ff;--accink:#10151d}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.4}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+header{display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+h1{font-size:1.35rem;font-weight:800;margin:0;letter-spacing:-.02em;flex:1}
+.btn{border:1px solid var(--line);background:var(--panel);padding:8px 14px;border-radius:8px;font-weight:600}
+.btn.main{background:var(--acc);color:var(--accink);border-color:var(--acc)}
+#status{padding:10px 20px;color:var(--mute);font-size:.9rem}
+#status.err{color:#c4302b}
+.consent{display:block;padding:0 20px 8px;font-size:.88rem;color:var(--mute)}
+.consent[hidden]{display:none}
+.consent a,footer a{color:var(--acc)}
+footer{padding:16px 20px 28px;font-size:.85rem;color:var(--mute);border-top:1px solid var(--line)}
+.layout{display:grid;grid-template-columns:240px 1fr;gap:0;min-height:calc(100vh - 110px)}
+#rail{padding:12px;border-right:1px solid var(--line);overflow-y:auto;max-height:calc(100vh - 110px);position:sticky;top:60px;align-self:start}
+.ch{display:flex;align-items:center;gap:10px;width:100%;padding:7px 8px;border:0;background:none;border-radius:8px;text-align:left}
+.ch:hover{background:var(--line)}
+.ch[aria-pressed=true]{background:var(--acc);color:var(--accink)}
+.ch img{width:32px;height:32px;border-radius:50%;flex:none;object-fit:cover;background:var(--line)}
+.ch span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.92rem}
+#grid{padding:20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:22px 16px;align-content:start}
+.card{display:block;color:inherit;text-decoration:none}
+.thumb{position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:var(--line)}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.meta{display:flex;gap:10px;margin-top:10px}
+.meta img{width:36px;height:36px;border-radius:50%;flex:none;object-fit:cover}
+.t{font-weight:600;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.s{color:var(--mute);font-size:.85rem;margin-top:2px}
+.card:hover .t{color:var(--acc)}
+.badge{position:absolute;left:8px;top:8px;padding:2px 9px;border-radius:6px;font-size:.78rem;font-weight:800;letter-spacing:.02em}
+.badge.live{background:#d62828;color:#fff}
+.badge.new{background:var(--acc);color:var(--accink)}
+.empty{grid-column:1/-1;padding:60px 0;text-align:center;color:var(--mute)}
+@media(max-width:760px){
+.layout{grid-template-columns:1fr}
+#rail{display:flex;gap:6px;overflow-x:auto;max-height:none;position:static;border-right:0;border-bottom:1px solid var(--line)}
+.ch{width:auto;flex:none}
+#grid{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
-<main>
-<h1>Ketentuan Layanan Langgananku</h1>
-<p class="d">Diperbarui 20 November 2026</p>
+<header>
+  <h1>Langgananku</h1>
+  <button class="btn" id="refresh" hidden>Muat ulang</button>
+  <button class="btn main" id="login">Masuk dengan Google</button>
+  <button class="btn" id="logout" hidden>Keluar</button>
+</header>
+<div id="status">Masuk dengan akun Google untuk melihat video terbaru dari channel yang kamu subscribe.</div>
+<label class="consent" id="consent"><input type="checkbox" id="setuju"> Saya setuju dengan <a href="/privacy">Kebijakan Privasi</a>, <a href="/terms">Ketentuan Layanan</a> aplikasi ini, dan <a href="https://www.youtube.com/t/terms" target="_blank" rel="noopener">Ketentuan Layanan YouTube</a>.</label>
+<div class="layout">
+  <nav id="rail" aria-label="Channel yang disubscribe"></nav>
+  <main id="grid"></main>
+</div>
+<footer>Aplikasi ini menggunakan YouTube API Services. <a href="/privacy">Kebijakan Privasi</a> • <a href="/terms">Ketentuan Layanan</a> • <a href="https://www.youtube.com/t/terms" target="_blank" rel="noopener">Ketentuan Layanan YouTube</a> • <a href="http://www.google.com/policies/privacy" target="_blank" rel="noopener">Kebijakan Privasi Google</a></footer>
 
-<h2>Tentang layanan</h2>
-<p>Langgananku adalah halaman web yang menampilkan video terbaru dari channel YouTube yang kamu subscribe. Setiap video dibuka langsung di YouTube. Layanan ini gratis dan tidak berafiliasi dengan YouTube atau Google.</p>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>
+// ====== PENGATURAN ======
+const CLIENT_ID = "319061354289-q5gal9an0atbnqmbq0opm8i5u2f85f4q.apps.googleusercontent.com";
+const VIDEOS_PER_CHANNEL = 5;     // video terbaru per channel
+const CACHE_MENIT = 15;           // hemat kuota API
+const BARU_JAM = 24;              // label BARU hilang setelah lewat jam ini
+// ========================
 
-<h2>Penggunaan</h2>
-<ul>
-<li>Kamu masuk dengan akun Google milikmu sendiri dan hanya memberi izin baca-saja.</li>
-<li>Dengan memakai layanan ini, kamu juga terikat pada <a href="https://www.youtube.com/t/terms" target="_blank" rel="noopener">Ketentuan Layanan YouTube</a>.</li>
-<li>Jangan memakai layanan ini untuk menyalahgunakan, mengganggu, atau mengakses data orang lain.</li>
-</ul>
+const SCOPE = "https://www.googleapis.com/auth/youtube.readonly";
+const API = "https://www.googleapis.com/youtube/v3/";
+const $ = id => document.getElementById(id);
+let token = null, tokenClient = null, subs = [], videos = [], filter = null;
 
-<h2>Privasi</h2>
-<p>Cara data diakses dan disimpan dijelaskan di <a href="/privacy">Kebijakan Privasi</a>.</p>
+function el(tag, props = {}, ...kids) {
+  const e = document.createElement(tag);
+  for (const k in props) k in e ? e[k] = props[k] : e.setAttribute(k, props[k]);
+  kids.forEach(c => e.append(c));
+  return e;
+}
+function setStatus(msg, err) { const s = $("status"); s.textContent = msg; s.className = err ? "err" : ""; s.hidden = !msg; }
 
-<h2>Batasan</h2>
-<p>Layanan disediakan apa adanya, tanpa jaminan bahwa selalu tersedia atau bebas kesalahan. Data video berasal dari YouTube dan bisa terlambat atau berubah. Layanan dapat berubah atau dihentikan sewaktu-waktu, dan ketentuan ini dapat diperbarui dengan mengubah tanggal di atas.</p>
+async function api(path, params) {
+  const url = API + path + "?" + new URLSearchParams(params);
+  const r = await fetch(url, { headers: { Authorization: "Bearer " + token } });
+  if (r.status === 401) { const e = new Error("expired"); e.code = 401; throw e; }
+  if (!r.ok) { const e = new Error("HTTP " + r.status); e.code = r.status; throw e; }
+  return r.json();
+}
 
-<h2>Kontak</h2>
-<p>Pertanyaan bisa dikirim ke <a href="mailto:iqbalcraftmc.official1@gmail.com">iqbalcraftmc.official1@gmail.com</a>.</p>
-</main>
+async function loadSubs() {
+  const out = []; let pageToken = "";
+  do {
+    const d = await api("subscriptions", { part: "snippet", mine: "true", maxResults: 50, order: "alphabetical", pageToken });
+    d.items.forEach(i => out.push({
+      id: i.snippet.resourceId.channelId,
+      name: i.snippet.title,
+      avatar: (i.snippet.thumbnails.default || i.snippet.thumbnails.medium || {}).url
+    }));
+    pageToken = d.nextPageToken || "";
+  } while (pageToken);
+  return out;
+}
+
+async function loadVideos(list) {
+  const out = []; let done = 0, i = 0;
+  async function worker() {
+    while (i < list.length) {
+      const ch = list[i++];
+      try {
+        // ID playlist upload channel = "UU" + ID channel tanpa 2 huruf pertama
+        const d = await api("playlistItems", { part: "snippet,contentDetails", playlistId: "UU" + ch.id.slice(2), maxResults: VIDEOS_PER_CHANNEL });
+        d.items.forEach(v => {
+          const t = v.snippet.thumbnails || {};
+          const th = t.medium || t.high || t.default;
+          if (!th || v.snippet.title === "Private video" || v.snippet.title === "Deleted video") return;
+          out.push({ id: v.contentDetails.videoId, title: v.snippet.title, thumb: th.url, date: v.contentDetails.videoPublishedAt || v.snippet.publishedAt, ch });
+        });
+      } catch (e) { if (e.code === 401 || e.code === 403) throw e; /* channel tanpa video publik: lewati */ }
+      setStatus("Memuat video… " + (++done) + " dari " + list.length + " channel");
+    }
+  }
+  await Promise.all(Array.from({ length: 6 }, worker));
+  return out.sort((a, b) => new Date(b.date) - new Date(a.date));
+}
+
+// Cek video mana yang sedang live (maks 50 ID per permintaan)
+async function cekLive(list) {
+  for (let i = 0; i < list.length; i += 50) {
+    const chunk = list.slice(i, i + 50);
+    const d = await api("videos", { part: "snippet", id: chunk.map(v => v.id).join(","), maxResults: 50 });
+    const st = {};
+    d.items.forEach(x => st[x.id] = x.snippet.liveBroadcastContent);
+    chunk.forEach(v => v.live = st[v.id] === "live");
+  }
+}
+
+function thumbEl(v) {
+  const t = el("div", { className: "thumb" }, el("img", { src: v.thumb, alt: "", loading: "lazy" }));
+  if (v.live) t.append(el("span", { className: "badge live", textContent: "LIVE" }));
+  else if (Date.now() - new Date(v.date) < BARU_JAM * 3600000) t.append(el("span", { className: "badge new", textContent: "BARU" }));
+  return t;
+}
+
+const rtf = new Intl.RelativeTimeFormat("id", { numeric: "auto" });
+function ago(iso) {
+  const s = (new Date(iso) - Date.now()) / 1000;
+  for (const [u, n] of [["year", 31536000], ["month", 2592000], ["week", 604800], ["day", 86400], ["hour", 3600], ["minute", 60]])
+    if (Math.abs(s) >= n) return rtf.format(Math.round(s / n), u);
+  return "baru saja";
+}
+
+function render() {
+  const rail = $("rail"), railScroll = rail.scrollTop; rail.replaceChildren();
+  const all = el("button", { className: "ch", type: "button", ariaPressed: String(!filter) }, el("span", { textContent: "Semua channel" }));
+  all.setAttribute("aria-pressed", String(!filter));
+  all.onclick = () => { filter = null; render(); };
+  rail.append(all);
+  subs.forEach(c => {
+    const b = el("button", { className: "ch", type: "button" }, el("img", { src: c.avatar, alt: "", loading: "lazy" }), el("span", { textContent: c.name }));
+    b.setAttribute("aria-pressed", String(filter === c.id));
+    b.onclick = () => { filter = filter === c.id ? null : c.id; render(); };
+    rail.append(b);
+  });
+  rail.scrollTop = railScroll;
+  const grid = $("grid"); grid.replaceChildren();
+  const shown = videos.filter(v => !filter || v.ch.id === filter);
+  if (!shown.length) { grid.append(el("p", { className: "empty", textContent: "Belum ada video untuk ditampilkan." })); return; }
+  shown.forEach(v => grid.append(
+    el("a", { className: "card", href: "https://www.youtube.com/watch?v=" + v.id, target: "_blank", rel: "noopener" },
+      thumbEl(v),
+      el("div", { className: "meta" },
+        el("img", { src: v.ch.avatar, alt: "", loading: "lazy" }),
+        el("div", {},
+          el("div", { className: "t", textContent: v.title }),
+          el("div", { className: "s", textContent: v.ch.name + " \u2022 " + ago(v.date) })))
+    )));
+}
+
+async function muat(paksa) {
+  const kunci = "langgananku:v1";
+  try {
+    const c = JSON.parse(localStorage.getItem(kunci) || "null");
+    if (!paksa && c && Date.now() - c.t < CACHE_MENIT * 60000) {
+      subs = c.subs; videos = c.videos; setStatus(""); render();
+      try { await cekLive(videos); render(); } catch (e) {}
+      return;
+    }
+  } catch (e) {}
+  try {
+    setStatus("Mengambil daftar subscribe…");
+    subs = await loadSubs();
+    videos = await loadVideos(subs);
+    try { await cekLive(videos); } catch (e) {}
+    try { localStorage.setItem(kunci, JSON.stringify({ t: Date.now(), subs, videos })); } catch (e) {}
+    setStatus(""); render();
+  } catch (e) {
+    if (e.code === 401) setStatus("Sesi habis. Klik “Masuk dengan Google” lagi.", true);
+    else if (e.code === 403) setStatus("Akses ditolak atau kuota API harian habis. Coba lagi besok, atau cek pengaturan di Google Cloud Console.", true);
+    else setStatus("Gagal memuat data (" + e.message + "). Cek koneksi lalu klik Muat ulang.", true);
+  }
+}
+
+function masuk() {
+  if (!$("setuju").checked) { setStatus("Centang persetujuan Kebijakan Privasi dan Ketentuan Layanan dulu.", true); return; }
+  if (!window.google || !google.accounts) { setStatus("Library Google belum siap. Coba lagi sebentar.", true); return; }
+  if (!tokenClient) tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID, scope: SCOPE,
+    callback: r => {
+      if (r.error) { setStatus("Login gagal: " + r.error, true); return; }
+      token = r.access_token;
+      $("consent").hidden = true; $("login").hidden = true; $("logout").hidden = false; $("refresh").hidden = false;
+      muat(false);
+    }
+  });
+  tokenClient.requestAccessToken();
+}
+// Label BARU diperiksa ulang tiap menit, status LIVE tiap 5 menit
+setInterval(() => { if (videos.length) render(); }, 60000);
+setInterval(async () => {
+  if (!token || !videos.length) return;
+  try { await cekLive(videos); render(); } catch (e) {}
+}, 300000);
+$("login").onclick = masuk;
+$("refresh").onclick = () => muat(true);
+$("logout").onclick = () => {
+  if (token) google.accounts.oauth2.revoke(token, () => {});
+  token = null; subs = []; videos = []; filter = null;
+  try { localStorage.removeItem("langgananku:v1"); } catch (e) {}
+  $("consent").hidden = false; $("login").hidden = false; $("logout").hidden = true; $("refresh").hidden = true;
+  $("rail").replaceChildren(); $("grid").replaceChildren();
+  setStatus("Kamu sudah keluar.");
+};
+</script>
 </body>
 </html>
